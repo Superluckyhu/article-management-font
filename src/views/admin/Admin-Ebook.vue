@@ -1,11 +1,18 @@
 <template>
-  <div>
-    test
-  </div>
+  <a-layout>
+    <a-layout-content
+        :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
+    >
+      <div class="test">
+        <h1>电子书管理</h1>
+      </div>
+    </a-layout-content>
+  </a-layout>
 </template>
 
 <script lang="ts">
 import {defineComponent} from 'vue';
+
 export default defineComponent({
   name: 'AdminEbook'
 })
