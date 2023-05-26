@@ -46,13 +46,16 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      Content
+      <pre>
+        {{ebookList}}
+      </pre>
+
     </a-layout-content>
   </a-layout>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent ,onMounted,ref } from 'vue';
 import axios from "axios";
 export default defineComponent({
   name: 'HomeView',
@@ -60,9 +63,19 @@ export default defineComponent({
 
   },
   setup(){
-    axios.get("http://localhost:8888/api/ebook/getBookList?name=Spring").then((response)=>{
-      console.log(response);
+    const ebookList = ref();
+
+
+    onMounted(()=>{
+      axios.get("http://localhost:8888/api/ebook/getBookList?name=Spring").then((response)=>{
+        const data = response.data
+        ebookList.value = data.content;
+        console.log(response);
+      })
     })
+    return {
+      ebookList
+    }
   }
 });
 </script>
