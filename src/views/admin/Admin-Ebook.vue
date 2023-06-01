@@ -12,11 +12,11 @@
           @change="handleTableChange"
       >
         <template #cover="{ text : cover }">
-          <img v-if="cover" :src="cover" alt="avatar"/>
+          <img v-if="cover" style="height: 50px;width: 50px "  :src="cover" alt="avatar"/>
         </template>
         <template v-slot:action="{ text,record }">
           <a-space size="small">
-            <a-button type="primary">
+            <a-button @click="showEditModal" type="primary">
               编辑
             </a-button>
             <a-button type="danger">
@@ -27,6 +27,17 @@
       </a-table>
     </a-layout-content>
   </a-layout>
+
+  <div>
+    <a-modal
+        title="电子书表单"
+        v-model:visible="modalVisible"
+        :confirm-loading="modalConfirmLoading"
+        @ok="handleModalOk"
+    >
+      <p>modalText</p>
+    </a-modal>
+  </div>
 </template>
 
 <script lang="ts">
@@ -39,7 +50,7 @@ export default defineComponent({
     const ebookList = ref();
     const pagination = ref({
       current: 1,
-      pageSize: 2,
+      pageSize: 4,
       total: 0
     });
     const loading = ref(false);
@@ -81,17 +92,33 @@ export default defineComponent({
         slots: {customRender: 'action'}
       }
     ];
+    const modalVisible = ref<boolean>(false);
+    const modalConfirmLoading = ref<boolean>(false);
+    const showEditModal = () => {
+      modalVisible.value = true;
+    };
+    const handleModalOk = () => {
+      modalConfirmLoading.value = true;
+      setTimeout(() => {
+        modalVisible.value = false;
+        modalConfirmLoading.value = false;
+      }, 2000);
+    };
     /**
      * 数据查询
      */
     const handleQuery = (params: any) => {
       loading.value = true;
-      axios.get("/ebbok/getBookList").then((rsp)=>{
+      // console.log('params',params)
+      axios.get("/ebook/getBookList",{
+        params: params
+      }).then((rsp)=>{
         loading.value = false;
         const data = rsp.data;
-        ebookList.value = data.content;
+        ebookList.value = data.content.list;
       //   重置分页按钮
         pagination.value.current = params.page;
+        pagination.value.total = data.content.total;
       })
 
     };
@@ -106,7 +133,10 @@ export default defineComponent({
       })
     };
     onMounted(()=>{
-      handleQuery({});
+      handleQuery({
+        page: 1,
+        size: pagination.value.pageSize
+      });
     })
 
 
@@ -115,7 +145,11 @@ export default defineComponent({
       pagination,
       loading,
       columns,
-      handleTableChange
+      handleTableChange,
+      modalVisible,
+      modalConfirmLoading,
+      showEditModal,
+      handleModalOk,
     }
   }
 

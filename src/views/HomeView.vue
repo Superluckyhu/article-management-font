@@ -83,9 +83,14 @@ export default defineComponent({
 
 
     onMounted(()=>{
-      axios.get("ebook/getBookList").then((response)=>{
+      axios.get("ebook/getBookList",{
+        params: {
+          page: 1,
+          size: 1000
+        }
+      }).then((response)=>{
         const data = response.data
-        ebookList.value = data.content;
+        ebookList.value = data.content.list;
       })
     })
 
